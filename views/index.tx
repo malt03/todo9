@@ -2,11 +2,12 @@
 : around content -> {
 <h1><: $greeting :> <: $c.stash.site_name :></h1>
 
-<form id="add" method="post" action="<: $c.req.uri_for('create') :>">
+<form id="add">
   <input name="content" type="textarea" />
   <input type="button" value="追加" onClick="addPost('<: $c.req.uri_for('create') :>')"/>
 </form>
 
+<p><a id="tooltip" href="#" title="タイトル|本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文">ここにカーソルを合わせてみてください。</a></p>
 <div id="task_list">
 <table border="1">
 <tr><th>最終更新</th><th>内容</th><th></th><th></th></tr>

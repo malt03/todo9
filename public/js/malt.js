@@ -1,5 +1,6 @@
 function addPost(uri){
 	var val = $('#add [name=content]').val();
+	$('#add [name=content]').val('');
 	$.post(
 		uri,
 		{"content": val},
