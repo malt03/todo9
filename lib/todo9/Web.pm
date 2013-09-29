@@ -22,29 +22,38 @@ sub getTable{
 	$dbh->disconnect;
 
 	my $tool_tips = "";
-	my $return_text = "<table border=\"1\">\n<tr><th>最終更新</th><th>内容</th><th></th><th></th></tr>";
+	my $return_text = "<table border=\"1\">\n<tr><th>重要性</th><th>内容</th><th>最終更新</th><th></th></tr>";
 	foreach my $data (@$rows){
 		my $decode_content = decode('UTF-8', $data->{content});
 ############################################################################################
         $return_text .=<<EOF;
-<tr><td>$data->{updated_at}</td><td>$decode_content</td>
-  <td>
-  <input id="edit_button$data->{id}" type="button" value="編集" onClick="displayTips($data->{id})">
-  </td><td>
-	<input type="button" value="削除" onClick="deletePost('delete', $data->{id})">
-  </td>
+<tr>
+	<td id="edit_importance$data->{id}" onClick="displayEditImportance($data->{id})">$data->{importance}</td>
+	<td id="edit_button$data->{id}" onClick="displayTips($data->{id})">$decode_content</td>
+	<td>$data->{updated_at}</td>
+	<td><input type="button" value="削除" onClick="deletePost('delete', $data->{id})"></td>
 </form>
 </td></tr>
 EOF
 ############################################################################################
         $tool_tips .=<<EOF;
 <div id="tips$data->{id}" style="display:none;width:215px;height:55px;position:absolute;background-color:white;border:solid black;padding:5px">
-  <form id='edit_commit$data->{id}'>
+  <form id='edit_content_commit$data->{id}'>
 	<table><tr><td>
-	<input name='content' type='textarea' value='$decode_content' onKeyPress='return editEnter(event, $data->{id})'>
+	<input name='content' type='textarea' value='$decode_content' onKeyPress='return editEnter(event, $data->{id}, "content")'>
 	</td></tr><tr><td>
-	<input type="button" value="決定" onClick="editPost('edit', $data->{id})">
+	<input type="button" value="決定" onClick="editPost('edit', $data->{id}, 'content')">
 	<input type="button" value="閉じる" onClick="\$('#tips$data->{id}').hide()">
+	</td></tr></table>
+  </form>
+</div>
+<div id="edit_importance_window$data->{id}" style="display:none;width:215px;height:55px;position:absolute;background-color:white;border:solid black;padding:5px">
+  <form id='edit_importance_commit$data->{id}'>
+	<table><tr><td>
+	<input name='content' type='textarea' value='$data->{importance}' onKeyPress='return editEnter(event, $data->{id}, "importance")'>
+	</td></tr><tr><td>
+	<input type="button" value="決定" onClick="editPost('edit', $data->{id}, 'importance')">
+	<input type="button" value="閉じる" onClick="\$('#edit_importance_window$data->{id}').hide()">
 	</td></tr></table>
   </form>
 </div>
@@ -174,7 +183,12 @@ post '/edit' => sub {
 			rule => [
 			['NOT_NULL', 'empty body'],
 			],
-		}
+		},
+		'columnname' => {
+			rule => [
+			['NOT_NULL', 'empty body'],
+			],
+		},
 	]);
 
 	if($result->has_error){
@@ -188,7 +202,8 @@ post '/edit' => sub {
 
 	my $id = $result->valid('id');
 	my $content = $result->valid('content');
-	my $sth = $dbh->prepare("UPDATE todo9 SET content = '$content' WHERE id = '$id'");
+	my $column_name = $result->valid('columnname');
+	my $sth = $dbh->prepare("UPDATE todo9 SET $column_name = '$content' WHERE id = '$id'");
 
 	$sth->execute;
 	$sth->finish;

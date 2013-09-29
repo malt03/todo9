@@ -23,15 +23,24 @@ function deletePost(uri, id){
 	);
 }
 
-function editEnter(e, id){
+function editEnter(e, id, column_name){
 	if(e.keyCode == 13){
-		editPost("edit", id);
+		editPost("edit", id, column_name);
 		return false;
 	}
 }
 
-function editPost(uri, id){
-	var val = $('#edit_commit'+id+' [name=content]').val();
+function editPost(uri, id, column_name){
+	var val = $('#edit_'+column_name+'_commit'+id+' [name=content]').val();
+	$.post(
+		uri,
+		{"id": id, "content": val, "columnname": column_name},
+		getData
+	);
+}
+
+function editImportance(uri, id){
+	var val = $('#edit_importance_commit'+id+' [name=content]').val();
 	$.post(
 		uri,
 		{"id": id, "content": val},
@@ -56,8 +65,15 @@ function displayTips(id){
 	var off = $('#edit_button'+id).offset();
 	$('#tips'+id).css({top:off.top,left:off.left});
 	$('#tips'+id).show();
-	$('#edit_commit'+id+' [name=content]').focus();
+	$('#edit_content_commit'+id+' [name=content]').focus();
 }
+
+function displayEditImportance(id){
+	var off = $('#edit_importance'+id).offset();
+	$('#edit_importance_window'+id).css({top:off.top,left:off.left});
+	$('#edit_importance_window'+id).show();
+	$('#edit_importance_commit'+id+' [name=content]').focus();
+z}
 
 $(document).ready(function() {
 	$.get(
