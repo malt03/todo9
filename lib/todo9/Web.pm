@@ -27,7 +27,6 @@ get '/' => sub {
 
 	$sth->execute;
 	my $rows = $sth->fetchall_arrayref(+{});
-	print Dumper $rows->[0]->{content};
 	
 	$sth->finish;
 	$dbh->disconnect;
@@ -50,8 +49,6 @@ get '/json' => sub {
     ]);
     $c->render_json({ greeting => $result->valid->get('q') });
 };
-
-1;
 
 post '/create' => sub {
 	my ($self, $c) = @_;
@@ -80,4 +77,70 @@ post '/create' => sub {
 	$dbh->disconnect;
 
 	return "OK!";
-}
+};
+
+post '/delete' => sub {
+	my ($self, $c) = @_;
+	my $result = $c->req->validator([
+		'id' => {
+			rule => [
+			['NOT_NULL', 'empty body'],
+			],
+		}
+	]);
+
+	if($result->has_error){
+		return $c->render_json({error=>1, messages=>$result->errors});
+	}
+	
+	my $database = 'DBI:mysql:DeNA';
+	my $username = 'dena';
+	my $password = 'shibuyahikarie';
+	my $dbh = DBI->connect($database, $username, $password);
+
+	my $id = $result->valid('id');
+	my $sth = $dbh->prepare("DELETE FROM todo9 WHERE id = '$id'");
+
+	$sth->execute;
+	$sth->finish;
+	$dbh->disconnect;
+
+	return "OK!";
+};
+
+post '/edit' => sub {
+	my ($self, $c) = @_;
+	my $result = $c->req->validator([
+		'id' => {
+			rule => [
+			['NOT_NULL', 'empty body'],
+			],
+		},
+		'content' => {
+			rule => [
+			['NOT_NULL', 'empty body'],
+			],
+		}
+	]);
+
+	if($result->has_error){
+		return $c->render_json({error=>1, messages=>$result->errors});
+	}
+	
+	my $database = 'DBI:mysql:DeNA';
+	my $username = 'dena';
+	my $password = 'shibuyahikarie';
+	my $dbh = DBI->connect($database, $username, $password);
+
+	my $id = $result->valid('id');
+	my $content = $result->valid('content');
+	my $sth = $dbh->prepare("UPDATE todo9 SET content = '$content' WHERE id = '$id'");
+
+	$sth->execute;
+	$sth->finish;
+	$dbh->disconnect;
+
+	return "OK!";
+};
+
+1;

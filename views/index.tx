@@ -8,11 +8,27 @@
 </form>
 
 <table border="1">
-<tr><th>最終更新</th><th>内容</th></tr>
+<tr><th>最終更新</th><th>内容</th><th></th><th></th></tr>
 : for $rows -> $value {
-<tr><td><: $value.updated_at :></td><td><: $value.content :></td>
+<tr>
+<td><: $value.updated_at :></td><td><: $value.content :></td>
+<td>
+  <input type="button" value="編集" onClick="$('#edit<: $value.id :>').get(0).style.display='block'">
+  <form method="post" action="<: $c.req.uri_for('edit') :>">
+	<input name="id" type="hidden" value="<: $value.id :>" />
+	<div id="edit<: $value.id :>" style="display:none">
+	  <input name="content" type="textarea" value="<: $value.content :>"><br/>
+	  <input type="submit">
+	  <input type="button" value="閉じる" onClick="$('#edit<: $value.id :>').get(0).style.display='none'">
+	</div>
+  </form>
+</td><td>
+  <form method="post" action="<: $c.req.uri_for('delete') :>">
+	<input name="id" type="hidden" value="<: $value.id :>" /><input type="submit" value="削除">
+  </form>
+</td>
+</tr>
 : }
 </table>
 
 : }
-
