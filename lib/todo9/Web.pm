@@ -22,38 +22,52 @@ sub getTable{
 	$dbh->disconnect;
 
 	my $tool_tips = "";
-	my $return_text = "<table class=\"tablesorter\" id=\"list\" border=\"1\">\n<thead><tr><th style=\"border:solid #000000 1px\">重要性</th><th style=\"border:solid #000000 1px\">内容</th><th style=\"border:solid #000000 1px\">最終更新</th><th style=\"border:solid #000000 1px\"></th></tr></thead>";
+	my $return_text = "<table class=\"tablesorter\" id=\"list\" border=\"1\">\n<thead><tr><th style=\"border:solid #000000 1px\">重要性</th><th style=\"border:solid #000000 1px\">状態</th><th style=\"border:solid #000000 1px\">内容</th><th style=\"border:solid #000000 1px\">最終更新</th><th style=\"border:solid #000000 1px\"></th></tr></thead>";
 	foreach my $data (@$rows){
 		my $decode_content = decode('UTF-8', $data->{content});
+		my $id = $data->{id};
 ############################################################################################
         $return_text .=<<EOF;
 <tr>
-	<td id="importance_edit$data->{id}" onClick="displayTips($data->{id}, 'importance')">$data->{importance}</td>
-	<td id="content_edit$data->{id}" onClick="displayTips($data->{id}, 'content')">$decode_content</td>
-	<td>$data->{updated_at}</td>
-	<td><input type="button" value="削除" onClick="deletePost('delete', $data->{id})"></td>
-</form>
+	<td id="importance_edit$id" onClick="displayTips($id, 'importance')" style="font-size:15px;vertical-align:middle">$data->{importance}</td>
+	<td>
+	    <select id="edit_status_commit$id" style="height:20px" onChange="editPostSelect('edit', $id, 'status')">
+EOF
+        my $status = $data->{status};
+        if($status eq 'untouched'){$return_text.='<option value="untouched" selected>untouched</option>';}
+		else                      {$return_text.='<option value="untouched">untouched</option>';}
+		if($status eq 'working')  {$return_text.='<option value="working" selected>working</option>';}
+		else                      {$return_text.='<option value="working">working</option>';}
+		if($status eq 'done')     {$return_text.='<option value="done" selected>done</option>';}
+		else                      {$return_text.='<option value="done">done</option>';}
+
+        $return_text .=<<EOF;
+		</select>
+	</td>
+	<td id="content_edit$id" onClick="displayTips($id, 'content')" style="font-size:15px;vertical-align:middle">$decode_content</td>
+	<td style="font-size:15px;vertical-align:middle">$data->{updated_at}</td>
+	<td><input type="button" value="削除" onClick="deletePost('delete', $id)" style="height:30px"></td>
 </td></tr>
 EOF
 ############################################################################################
         $tool_tips .=<<EOF;
-<div class="tips" id="content_tips$data->{id}" style="display:none;width:215px;height:55px;position:absolute;background-color:white;border:solid black;padding:5px">
-  <form id='edit_content_commit$data->{id}'>
+<div class="tips" id="content_tips$id" style="display:none;width:215px;height:55px;position:absolute;background-color:white;border:solid black;padding:5px">
+  <form id='edit_content_commit$id'>
 	<table><tr><td>
-	<input name='content' type='textarea' value='$decode_content' onKeyPress='return editEnter(event, $data->{id}, "content")'>
+	<input name='content' type='textarea' value='$decode_content' onKeyPress='return editEnter(event, $id, "content")'>
 	</td></tr><tr><td>
-	<input type="button" value="決定" onClick="editPost('edit', $data->{id}, 'content')">
-	<input type="button" value="閉じる" onClick="\$('#content_tips$data->{id}').hide()">
+	<input type="button" value="決定" onClick="editPost('edit', $id, 'content')">
+	<input type="button" value="閉じる" onClick="\$('#content_tips$id').hide()">
 	</td></tr></table>
   </form>
 </div>
-<div class="tips" id="importance_tips$data->{id}" style="display:none;width:215px;height:55px;position:absolute;background-color:white;border:solid black;padding:5px">
-  <form id='edit_importance_commit$data->{id}'>
+<div class="tips" id="importance_tips$id" style="display:none;width:215px;height:55px;position:absolute;background-color:white;border:solid black;padding:5px">
+  <form id='edit_importance_commit$id'>
 	<table><tr><td>
-	<input name='content' type='textarea' value='$data->{importance}' onKeyPress='return editEnter(event, $data->{id}, "importance")'>
+	<input name='content' type='textarea' value='$data->{importance}' onKeyPress='return editEnter(event, $id, "importance")' style="width:30px">
 	</td></tr><tr><td>
-	<input type="button" value="決定" onClick="editPost('edit', $data->{id}, 'importance')">
-	<input type="button" value="閉じる" onClick="\$('#importance_tips$data->{id}').hide()">
+	<input type="button" value="決定" onClick="editPost('edit', $id, 'importance')">
+	<input type="button" value="閉じる" onClick="\$('#importance_tips$id').hide()">
 	</td></tr></table>
   </form>
 </div>
@@ -120,6 +134,11 @@ post '/create' => sub {
 			rule => [
 				['NOT_NULL', 'empty body'],
 			],
+		},
+		'importance' => {
+			rule => [
+				['NOT_NULL', 'empty body'],
+			],
 		}
 	]);
 
@@ -132,8 +151,9 @@ post '/create' => sub {
 	my $password = 'shibuyahikarie';
 	my $dbh = DBI->connect($database, $username, $password);
 
+	my $importance = $result->valid('importance');
 	my $content = $result->valid('content');
-	my $sth = $dbh->prepare("INSERT INTO todo9 (content) VALUES('$content')");
+	my $sth = $dbh->prepare("INSERT INTO todo9 (importance, content) VALUES($importance, '$content')");
 	$sth->execute;
 	$sth->finish;
 	$dbh->disconnect;

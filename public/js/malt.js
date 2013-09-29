@@ -1,3 +1,9 @@
+function numOnly(){
+	m = String.fromCharCode(event.keyCode);
+	if("0123456789\b\r".indexOf(m, 0) < 0) return false;
+	return true;
+}
+
 function addEnter(e){
 	if(e.keyCode == 13){
 		addPost("create");
@@ -6,11 +12,13 @@ function addEnter(e){
 }
 
 function addPost(uri){
-	var val = $('#add [name=content]').val();
+	var importance = $('#add [name=importance]').val();
+	var content = $('#add [name=content]').val();
+	$('#add [name=importance]').val('');
 	$('#add [name=content]').val('');
 	$.post(
 		uri,
-		{"content": val},
+		{"content": content, "importance": importance},
 		getData
 	);
 }
@@ -36,6 +44,14 @@ function editPost(uri, id, column_name){
 		uri,
 		{"id": id, "content": val, "columnname": column_name},
 		getData
+	);
+}
+
+function editPostSelect(uri, id, column_name){
+	var val = $('#edit_'+column_name+'_commit'+id+' option:selected').val();
+	$.post(
+		uri,
+		{"id": id, "content": val, "columnname": column_name}
 	);
 }
 
