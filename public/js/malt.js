@@ -39,41 +39,27 @@ function editPost(uri, id, column_name){
 	);
 }
 
-function editImportance(uri, id){
-	var val = $('#edit_importance_commit'+id+' [name=content]').val();
-	$.post(
-		uri,
-		{"id": id, "content": val},
-		getData
-	);
-}
-
 function getData(data, status){
 	if(status == "success"){
 		$('#task_list').html(data);
-		$('.cluetip').cluetip({
-			splitTitle: '|',
-			showTitle: false,
-			activation: 'click',
+		$("#list").tablesorter({
+			sortList: [[0,1]],
+			headers: {
+				3: {sorter:false}
+			}
 		});
 	}else{
 		alert("Error:" + status);
 	}
 }
 
-function displayTips(id){
-	var off = $('#edit_button'+id).offset();
-	$('#tips'+id).css({top:off.top,left:off.left});
-	$('#tips'+id).show();
-	$('#edit_content_commit'+id+' [name=content]').focus();
+function displayTips(id, column_name){
+	$('.tips').hide();
+	var off = $('#'+column_name+'_edit'+id).offset();
+	$('#'+column_name+'_tips'+id).css({top:off.top,left:off.left});
+	$('#'+column_name+'_tips'+id).show();
+	$('#edit_'+column_name+'_commit'+id+' [name=content]').focus();
 }
-
-function displayEditImportance(id){
-	var off = $('#edit_importance'+id).offset();
-	$('#edit_importance_window'+id).css({top:off.top,left:off.left});
-	$('#edit_importance_window'+id).show();
-	$('#edit_importance_commit'+id+' [name=content]').focus();
-z}
 
 $(document).ready(function() {
 	$.get(

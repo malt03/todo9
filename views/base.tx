@@ -11,7 +11,7 @@ body {
 }
 </style>
 <link rel="stylesheet" href="<: $c.req.uri_for('/css/bootstrap-responsive.min.css') :>">
-<link rel="stylesheet" href="<: $c.req.uri_for('/js/cluetip/jquery.cluetip.css') :>">
+<link rel="stylesheet" href="<: $c.req.uri_for('/js/tablesorter/themes/blue/style.css') :>">
 </head>
 <body>
 
@@ -43,7 +43,6 @@ body {
 <script type="text/javascript" src="<: $c.req.uri_for('/js/jquery.min.js') :>"></script>
 <script type="text/javascript" src="<: $c.req.uri_for('/js/bootstrap.min.js') :>"></script>
 <script type="text/javascript" src="<: $c.req.uri_for('/js/malt.js') :>"></script>
-<script type="text/javascript" src="<: $c.req.uri_for('/js/cluetip/jquery.cluetip.js') :>"></script>
-<script type="text/javascript" src="<: $c.req.uri_for('/js/cluetip/jquery.hoverIntent.minified.js') :>"></script>
+<script type="text/javascript" src="<: $c.req.uri_for('/js/tablesorter/jquery.tablesorter.js') :>"></script>
 </body>
 </html>
