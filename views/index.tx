@@ -1,6 +1,18 @@
 : cascade base
 : around content -> {
 <h1><: $greeting :> <: $c.stash.site_name :></h1>
-<p>Use this document as a way to quick start any new project.<br> All you get is this message and a barebones HTML document.</p>
+
+<form method="post" action="<: $c.req.uri_for('create') :>">
+  <input name="content" type="textarea" />
+  <input type="submit" />
+</form>
+
+<table border="1">
+<tr><th>最終更新</th><th>内容</th></tr>
+: for $rows -> $value {
+<tr><td><: $value.updated_at :></td><td><: $value.content :></td>
+: }
+</table>
+
 : }
 
