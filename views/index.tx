@@ -3,33 +3,11 @@
 <h1><: $greeting :> <: $c.stash.site_name :></h1>
 
 <form id="add">
-  <input name="content" type="textarea" />
+  <input name="content" type="textarea" onKeyPress="addEnter(event);"/>
   <input type="button" value="追加" onClick="addPost('<: $c.req.uri_for('create') :>')"/>
 </form>
 
-<p><a id="tooltip" href="#" title="タイトル|本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文　テキスト　本文">ここにカーソルを合わせてみてください。</a></p>
 <div id="task_list">
-<table border="1">
-<tr><th>最終更新</th><th>内容</th><th></th><th></th></tr>
-: for $rows -> $value {
-<tr><td><: $value.updated_at :></td><td><: $value.content :></td>
-  <td>
-  <input type="button" value="編集" onClick="$('#edit<: $value.id :>').get(0).style.display='block'">
-  <div id="edit<: $value.id :>" style="display:none">
-	<form id="edit_commit<: $value.id :>">
-	  <input name="id" type="hidden" value="" />
-	  <input name="content" type="textarea" value="<: $value.content :>"><br/>
-	  <input type="button" value="決定" onClick="editPost('<: $c.req.uri_for('edit') :>', <: $value.id :>)">
-	  <input type="button" value="閉じる" onClick="$('#edit<: $value.id :>').get(0).style.display='none'">
-	</form>
-  </div>
-  </td><td>
-	<input type="button" value="削除" onClick="deletePost('<: $c.req.uri_for('delete') :>', <: $value.id :>)">
-  </td>
-</form>
-</td></tr>
-: }
-</table>
 </div>
 
 : }

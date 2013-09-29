@@ -21,13 +21,47 @@ sub getTable{
 	$sth->finish;
 	$dbh->disconnect;
 
+	my $tool_tips = "";
 	my $return_text = "<table border=\"1\">\n<tr><th>最終更新</th><th>内容</th><th></th><th></th></tr>";
 	foreach my $data (@$rows){
 		my $decode_content = decode('UTF-8', $data->{content});
-		$return_text .= "<tr><td>".$data->{updated_at}."</td><td>".$decode_content."</td>\n  <td>\n  <input type=\"button\" value=\"編集\" onClick=\"\$('#edit".$data->{id}."').get(0).style.display='block'\">\n  <div id=\"edit".$data->{id}."\" style=\"display:none\">\n	<form id=\"edit_commit".$data->{id}."\">\n	  <input name=\"id\" type=\"hidden\" value=\"\" />\n	  <input name=\"content\" type=\"textarea\" value=\"".$decode_content."\"><br/>\n	  <input type=\"button\" value=\"決定\" onClick=\"editPost('edit', ".$data->{id}.")\">\n	  <input type=\"button\" value=\"閉じる\" onClick=\"\$('#edit".$data->{id}."').get(0).style.display='none'\">\n	</form>\n  </div>\n  </td><td>\n	<input type=\"button\" value=\"削除\" onClick=\"deletePost('delete', ".$data->{id}.")\">\n  </td>\n</form>\n</td></tr>";
+############################################################################################
+		my $edit_text =<<EOF;
+
+<form id='edit_commit$data->{id}'>
+  <input name='id' type='hidden' value='$data->{id}' />
+  <input name='content' type='textarea' value='$decode_content'><br/>
+  <input type='button' value='決定' onClick='editPost(&quot;edit&quot;, $data->{id})'>
+</form>
+EOF
+        $return_text .=<<EOF;
+<tr><td>$data->{updated_at}</td><td>$decode_content</td>
+  <td>
+  <input id="edit_button$data->{id}" title="$edit_text" type="button" value="編集" onClick="displayTips($data->{id})">
+  </td><td>
+	<input type="button" value="削除" onClick="deletePost('delete', $data->{id})">
+  </td>
+</form>
+</td></tr>
+EOF
+############################################################################################
+        $tool_tips .=<<EOF;
+<div id="tips$data->{id}" style="display:none;width:215px;height:55px;position:absolute;background-color:white;border:solid black;padding:5px">
+  <form id='edit_commit$data->{id}'>
+	<table><tr><td>
+	<input name='content' type='textarea' value='$decode_content'>
+	</td></tr><tr><td>
+	<input type="button" value="決定" onClick="editPost('edit', $data->{id})">
+	<input type="button" value="閉じる" onClick="\$('#tips$data->{id}').hide()">
+	</td></tr></table>
+  </form>
+</div>
+EOF
+############################################################################################
 	}
 	$return_text .= "</table>";
 
+	$return_text .= $tool_tips;
 	return $return_text;
 }
 
@@ -59,6 +93,10 @@ get '/' => sub {
 		rows => $rows,
 		greeting => "Todo9!",
     });
+};
+
+get '/table' => sub {
+	return getTable();
 };
 
 get '/json' => sub {

@@ -28,7 +28,26 @@ function editPost(uri, id){
 function getData(data, status){
 	if(status == "success"){
 		$('#task_list').html(data);
+		$('.cluetip').cluetip({
+			splitTitle: '|',
+			showTitle: false,
+			activation: 'click',
+		});
 	}else{
 		alert("Error:" + status);
 	}
 }
+
+function displayTips(id){
+	var off = $('#edit_button'+id).offset();
+	$('#tips'+id).css({top:off.top,left:off.left});
+	$('#tips'+id).show();
+	$('#edit_commit'+id+' [name=content]').focus();
+}
+
+$(document).ready(function() {
+	$.get(
+		"table",
+		getData
+	);
+});
