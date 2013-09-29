@@ -26,18 +26,10 @@ sub getTable{
 	foreach my $data (@$rows){
 		my $decode_content = decode('UTF-8', $data->{content});
 ############################################################################################
-		my $edit_text =<<EOF;
-
-<form id='edit_commit$data->{id}'>
-  <input name='id' type='hidden' value='$data->{id}' />
-  <input name='content' type='textarea' value='$decode_content'><br/>
-  <input type='button' value='決定' onClick='editPost(&quot;edit&quot;, $data->{id})'>
-</form>
-EOF
         $return_text .=<<EOF;
 <tr><td>$data->{updated_at}</td><td>$decode_content</td>
   <td>
-  <input id="edit_button$data->{id}" title="$edit_text" type="button" value="編集" onClick="displayTips($data->{id})">
+  <input id="edit_button$data->{id}" type="button" value="編集" onClick="displayTips($data->{id})">
   </td><td>
 	<input type="button" value="削除" onClick="deletePost('delete', $data->{id})">
   </td>
@@ -49,7 +41,7 @@ EOF
 <div id="tips$data->{id}" style="display:none;width:215px;height:55px;position:absolute;background-color:white;border:solid black;padding:5px">
   <form id='edit_commit$data->{id}'>
 	<table><tr><td>
-	<input name='content' type='textarea' value='$decode_content'>
+	<input name='content' type='textarea' value='$decode_content' onKeyPress='return editEnter(event, $data->{id})'>
 	</td></tr><tr><td>
 	<input type="button" value="決定" onClick="editPost('edit', $data->{id})">
 	<input type="button" value="閉じる" onClick="\$('#tips$data->{id}').hide()">

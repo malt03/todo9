@@ -1,3 +1,10 @@
+function addEnter(e){
+	if(e.keyCode == 13){
+		addPost("create");
+		return false;
+	}
+}
+
 function addPost(uri){
 	var val = $('#add [name=content]').val();
 	$('#add [name=content]').val('');
@@ -14,6 +21,13 @@ function deletePost(uri, id){
 		{"id": id},
 		getData
 	);
+}
+
+function editEnter(e, id){
+	if(e.keyCode == 13){
+		editPost("edit", id);
+		return false;
+	}
 }
 
 function editPost(uri, id){
