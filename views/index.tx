@@ -3,9 +3,11 @@
 <h1><: $greeting :> <: $c.stash.site_name :></h1>
 
 <form id="add">
-  <input name="importance" type="textarea" onKeyPress="return (numOnly()&&addEnter(event));" style="width:30px"/>
-  <input name="content" type="textarea" onKeyPress="return addEnter(event);"/>
+  <table border="1"><tr><td style="width:100px;padding:4px">
+  <input name="importance" type="range" style="width:100px"/></td><td>
+  <input name="content" type="textarea" placeholder="content" onKeyPress="return addEnter(event);"/></td><td>
   <input type="button" value="追加" onClick="addPost('<: $c.req.uri_for('create') :>')"/>
+  </td></tr></table>
 </form>
 
 <div id="task_list">

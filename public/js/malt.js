@@ -48,7 +48,17 @@ function editPost(uri, id, column_name){
 }
 
 function editPostSelect(uri, id, column_name){
-	var val = $('#edit_'+column_name+'_commit'+id+' option:selected').val();
+	var obj = $('#edit_'+column_name+'_commit'+id);
+	$('#status_num'+id).html(obj.prop("selectedIndex"));
+	$('#list th').unbind();
+	$("#list").tablesorter({
+		sortList: [[0,1]],
+		headers: {
+			4: {sorter:false}
+		}
+	});
+
+	var val = obj.val();
 	$.post(
 		uri,
 		{"id": id, "content": val, "columnname": column_name}
@@ -57,10 +67,11 @@ function editPostSelect(uri, id, column_name){
 
 function editPostSlider(uri, id, column_name, val){
 	$('#importance_num'+id).html(val);
+	$('#list th').unbind();
 	$("#list").tablesorter({
 		sortList: [[0,1]],
 		headers: {
-			3: {sorter:false}
+			4: {sorter:false}
 		}
 	});
 	$.post(
@@ -75,7 +86,7 @@ function getData(data, status){
 		$("#list").tablesorter({
 			sortList: [[0,1]],
 			headers: {
-				3: {sorter:false}
+				4: {sorter:false}
 			}
 		});
 	}else{
