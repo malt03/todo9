@@ -22,23 +22,23 @@ sub getTable{
 	$dbh->disconnect;
 
 	my $tool_tips = "";
-	my $return_text = "<table class=\"tablesorter\" id=\"list\" border=\"1\">\n<thead><tr><th style=\"border:solid #000000 1px\">重要性</th><th style=\"border:solid #000000 1px\">状態</th><th style=\"border:solid #000000 1px\">内容</th><th style=\"border:solid #000000 1px\">最終更新</th><th style=\"border:solid #000000 1px\"></th></tr></thead>";
+	my $return_text = "<table class=\"tablesorter\" id=\"list\" border=\"1\">\n<thead><tr><th style=\"border:solid #000000 1px;width:110px\">重要性</th><th style=\"border:solid #000000 1px\">状態</th><th style=\"border:solid #000000 1px\">内容</th><th style=\"border:solid #000000 1px\">最終更新</th><th style=\"border:solid #000000 1px\"></th></tr></thead>";
 	foreach my $data (@$rows){
 		my $decode_content = decode('UTF-8', $data->{content});
 		my $id = $data->{id};
 ############################################################################################
         $return_text .=<<EOF;
 <tr>
-	<td id="importance_edit$id" onClick="displayTips($id, 'importance')" style="font-size:15px;vertical-align:middle">$data->{importance}</td>
+	<td id="importance_edit$id" style="text-align:center;font-size:15px;vertical-align:middle"><input type="range" value="$data->{importance}" max="100" style="width:100px" onMouseUp="editPostSlider('edit', $id, 'importance', this.value)"><div id="importance_num$id" style="display:none">$data->{importance}</div></td>
 	<td>
 	    <select id="edit_status_commit$id" style="height:20px" onChange="editPostSelect('edit', $id, 'status')">
 EOF
         my $status = $data->{status};
-        if($status eq 'untouched'){$return_text.='<option value="untouched" selected>untouched</option>';}
+        if($status eq 'untouched'){$return_text.='<div style="display:none">1</div><option value="untouched" selected>untouched</option>';}
 		else                      {$return_text.='<option value="untouched">untouched</option>';}
-		if($status eq 'working')  {$return_text.='<option value="working" selected>working</option>';}
+		if($status eq 'working')  {$return_text.='<div style="display:none">2</div><option value="working" selected>working</option>';}
 		else                      {$return_text.='<option value="working">working</option>';}
-		if($status eq 'done')     {$return_text.='<option value="done" selected>done</option>';}
+		if($status eq 'done')     {$return_text.='<div style="display:none">3</div><option value="done" selected>done</option>';}
 		else                      {$return_text.='<option value="done">done</option>';}
 
         $return_text .=<<EOF;

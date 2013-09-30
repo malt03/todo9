@@ -55,6 +55,20 @@ function editPostSelect(uri, id, column_name){
 	);
 }
 
+function editPostSlider(uri, id, column_name, val){
+	$('#importance_num'+id).html(val);
+	$("#list").tablesorter({
+		sortList: [[0,1]],
+		headers: {
+			3: {sorter:false}
+		}
+	});
+	$.post(
+		uri,
+		{"id": id, "content": val, "columnname": column_name}
+	);
+}
+
 function getData(data, status){
 	if(status == "success"){
 		$('#task_list').html(data);
