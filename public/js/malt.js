@@ -53,7 +53,7 @@ function editPostSelect(uri, id, column_name){
 	$('#list th').unbind();
 	$("#list").tablesorter({
 		headers: {
-			5: {sorter:false}
+			7: {sorter:false}
 		}
 	});
 
@@ -64,18 +64,26 @@ function editPostSelect(uri, id, column_name){
 	);
 }
 
-function editPostSlider(uri, id, column_name, val){
+function editPostSlider(uri, id, column_name, val, flag){
 	$('#'+column_name+'_num'+id).html(val);
 	$('#list th').unbind();
 	$("#list").tablesorter({
 		headers: {
-			5: {sorter:false}
+			7: {sorter:false}
 		}
 	});
-	$.post(
-		uri,
-		{"id": id, "content": val, "columnname": column_name}
-	);
+	if(flag){
+		$.post(
+			uri,
+			{"id": id, "content": val, "columnname": column_name}
+		);
+		$('.td'+id).css("background-color",val);
+	}else{
+		$.post(
+			uri,
+			{"id": id, "content": val, "columnname": column_name}
+		);
+	}
 }
 
 function getData(data, status){
@@ -84,7 +92,7 @@ function getData(data, status){
 		$("#list").tablesorter({
 			sortList: [[0,1]],
 			headers: {
-				5: {sorter:false}
+				7: {sorter:false}
 			}
 		});
 	}else{
@@ -98,6 +106,21 @@ function displayTips(id, column_name){
 	$('#'+column_name+'_tips'+id).css({top:off.top,left:off.left});
 	$('#'+column_name+'_tips'+id).show();
 	$('#edit_'+column_name+'_commit'+id+' [name=content]').focus();
+}
+
+function remainingTime(id){
+	var now_date = new Date();
+	var limit_date_html = $('#limit_date_num'+id).html();
+	if(limit_date_html === "") return;
+	var limit_date = Date.parse(limit_date_html);
+	var remaining_time = (limit_date-now_date.getTime())/1000;
+	if(remaining_time > 0){
+		$('#remaining_time'+id).html(Math.ceil(remaining_time/86400)+'日'+Math.ceil(remaining_time/3600%24)+'時間'+Math.ceil((remaining_time)/60%60)+'分'+Math.ceil(remaining_time%60-1)+'秒');
+		var color = Math.ceil(255 * (604800-remaining_time) / 604800);
+		if(color < 0) color = 0;
+		$('#remaining_time'+id).css("color","#"+color.toString(16)+"0000");
+		setTimeout(function(){remainingTime(id);}, 1000);
+	}
 }
 
 $(document).ready(function() {

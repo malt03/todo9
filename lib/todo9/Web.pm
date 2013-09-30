@@ -22,18 +22,19 @@ sub getTable{
 	$dbh->disconnect;
 
 	my $tool_tips = "";
-	my $return_text = "<table class=\"tablesorter\" id=\"list\" border=\"1\">\n<thead><tr><th style=\"border:solid #000000 1px;width:100px\">重要性</th><th style=\"border:solid #000000 1px\">内容</th><th style=\"border:solid #000000 1px\">状態</th><th style=\"border:solid #000000 1px\">期限</th><th style=\"border:solid #000000 1px\">最終更新</th><th style=\"border:solid #000000 1px\"></th></tr></thead>";
+	my $return_text = "<table class=\"tablesorter\" id=\"list\" border=\"1\">\n<thead><tr><th style=\"border:solid #000000 1px;width:100px\">重要性</th><th style=\"border:solid #000000 1px;width:250px\">内容</th><th style=\"border:solid #000000 1px\">状態</th><th style=\"border:solid #000000 1px\">期限</th><th style=\"border:solid #000000 1px;width:180px\">残り時間</th><th style=\"border:solid #000000 1px\">最終更新</th><th style=\"border:solid #000000 1px\">色</th><th style=\"border:solid #000000 1px\"></th></tr></thead>";
 	foreach my $data (@$rows){
 		my $decode_content = decode('UTF-8', $data->{content});
 		my $id = $data->{id};
+		my $bg_color = $data->{table_color};
 ############################################################################################
         $return_text .=<<EOF;
 <tr>
-	<td id="importance_edit$id" style="text-align:center;font-size:15px;vertical-align:middle">
-	<input type="range" value="$data->{importance}" style="width:100px" onMouseUp="editPostSlider('edit', $id, 'importance', this.value)">
+	<td class="td$id" id="importance_edit$id" style="text-align:center;font-size:15px;vertical-align:middle;background-color:$bg_color;">
+	<input type="range" value="$data->{importance}" style="width:100px" onMouseUp="editPostSlider('edit', $id, 'importance', this.value, false)">
 	<div id="importance_num$id" style="display:none">$data->{importance}</div></td>
-	<td id="content_edit$id" onClick="displayTips($id, 'content')" style="font-size:15px;vertical-align:middle">$decode_content</td>
-	<td>
+	<td class="td$id" id="content_edit$id" onClick="displayTips($id, 'content')" style="font-size:15px;vertical-align:middle;background-color:$bg_color;">$decode_content</td>
+	<td class="td$id" style="background-color:$bg_color;">
 	    <select id="edit_status_commit$id" onChange="editPostSelect('edit', $id, 'status')" style="position:relative;top:5px;width:120px">
 EOF
         my $status = $data->{status};
@@ -57,11 +58,17 @@ EOF
 		</select>
 		<div id="status_num$id" style="display:none">$status_number</div>
 	</td>
-	<td><input class="input" type="date" value="$limit_date" onChange="editPostSlider('edit', $id, 'limit_date', this.value)" style="position:relative;top:5px;width:140px">
+	<td class="td$id" style="background-color:$bg_color;"><input type="date" value="$limit_date" onChange="editPostSlider('edit', $id, 'limit_date', this.value, false)" style="position:relative;top:5px;width:140px">
 	<div id="limit_date_num$id" style="display:none">$limit_date</div></td>
-	<td style="font-size:15px;vertical-align:middle">$data->{updated_at}</td>
-	<td class="vertical-align:middle"><input type="button" class="btn btn-danger" value="削除" onClick="deletePost('delete', $id)" style="position:relative;top:5px"></td>
-</td></tr>
+	<td class="td$id" id="remaining_time$id" style="font-size:15px;vertical-align:middle;background-color:$bg_color;"></td>
+	<td class="td$id" style="font-size:15px;vertical-align:middle;background-color:$bg_color;">$data->{updated_at}</td>
+	<td class="td$id" id="importance_edit$id" style="text-align:center;font-size:15px;vertical-align:middle;background-color:$bg_color;">
+	<input type="color" value="$bg_color" style="width:30px;position:relative;top:5px" onChange="editPostSlider('edit', $id, 'table_color', this.value, true)">
+	<div id="table_color_num$id" style="display:none">$bg_color</div></td>
+	<td class="td$id" style="background-color:$bg_color;"><input type="button" class="btn btn-danger" value="削除" onClick="deletePost('delete', $id)" style="position:relative;top:5px">
+	<script type="text/javascript">remainingTime($id);</script>
+</td>
+</tr>
 EOF
 ############################################################################################
         $tool_tips .=<<EOF;

@@ -6,6 +6,8 @@
   <table><tr><td style="width:100px;padding:4px">
   <input name="importance" type="range" style="width:100px"/></td><td>
   <input name="content" type="textarea" placeholder="content" onKeyPress="return addEnter(event);"/></td><td>
+  <input name="limit_date" type="date" style="position:relative;top:5px"/></td><td>
+  <input name="table_color" value="#ffffff" type="color" style="width:30px;position:relative;top:5px"/></td><td>
   <input type="button" class="btn btn-primary" value="追加" onClick="addPost('<: $c.req.uri_for('create') :>')"/>
   </td></tr></table>
 </form>
