@@ -14,11 +14,15 @@ function addEnter(e){
 function addPost(uri){
 	var importance = $('#add [name=importance]').val();
 	var content = $('#add [name=content]').val();
-	$('#add [name=importance]').val('');
+	var table_color = $('#add [name=table_color]').val();
+	var limit_date = $('#add [name=limit_date]').val();
+	$('#add [name=importance]').val(50);
 	$('#add [name=content]').val('');
+	$('#add [name=table_color]').val('#ffffff');
+	$('#add [name=limit_date]').val('');
 	$.post(
 		uri,
-		{"content": content, "importance": importance},
+		{"content": content, "importance": importance, "table_color": table_color, "limit_date": limit_date},
 		getData
 	);
 }
@@ -90,7 +94,7 @@ function getData(data, status){
 	if(status == "success"){
 		$('#task_list').html(data);
 		$("#list").tablesorter({
-			sortList: [[0,1]],
+			sortList: [[6,1]],
 			headers: {
 				7: {sorter:false}
 			}

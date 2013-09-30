@@ -65,7 +65,7 @@ EOF
 	<td class="td$id" id="importance_edit$id" style="text-align:center;font-size:15px;vertical-align:middle;background-color:$bg_color;">
 	<input type="color" value="$bg_color" style="width:30px;position:relative;top:5px" onChange="editPostSlider('edit', $id, 'table_color', this.value, true)">
 	<div id="table_color_num$id" style="display:none">$bg_color</div></td>
-	<td class="td$id" style="background-color:$bg_color;"><input type="button" class="btn btn-danger" value="削除" onClick="deletePost('delete', $id)" style="position:relative;top:5px">
+	<td class="td$id" style="background-color:$bg_color;"><input type="button" class="btn btn-danger" value="削除" onClick="deletePost('delete', $id)" style="position:relative;top:5px;left:5px">
 	<script type="text/javascript">remainingTime($id);</script>
 </td>
 </tr>
@@ -159,7 +159,15 @@ post '/create' => sub {
 			rule => [
 				['NOT_NULL', 'empty body'],
 			],
-		}
+		},
+		'table_color' => {
+			rule => [
+				['NOT_NULL', 'empty body'],
+			],
+		},
+		'limit_date' => {
+			rule => [],
+		}		
 	]);
 
 	if($result->has_error){
@@ -173,10 +181,20 @@ post '/create' => sub {
 
 	my $importance = $result->valid('importance');
 	my $content = $result->valid('content');
-	my $sth = $dbh->prepare("INSERT INTO todo9 (importance, content) VALUES($importance, '$content')");
-	$sth->execute;
-	$sth->finish;
-	$dbh->disconnect;
+	my $table_color = $result->valid('table_color');
+	my $sth;
+	if($result->valid('limit_date') eq ""){
+		$sth = $dbh->prepare("INSERT INTO todo9 (importance, content, table_color) VALUES($importance, '$content', '$table_color')");
+		$sth->execute;
+		$sth->finish;
+		$dbh->disconnect;
+	}else{
+		my $limit_date = $result->valid('limit_date');
+		$sth = $dbh->prepare("INSERT INTO todo9 (importance, content, limit_date, table_color) VALUES($importance, '$content', '$limit_date', '$table_color')");
+		$sth->execute;
+		$sth->finish;
+		$dbh->disconnect;
+	}
 
 	return getTable();
 };
