@@ -52,9 +52,8 @@ function editPostSelect(uri, id, column_name){
 	$('#status_num'+id).html(obj.prop("selectedIndex"));
 	$('#list th').unbind();
 	$("#list").tablesorter({
-		sortList: [[0,1]],
 		headers: {
-			4: {sorter:false}
+			5: {sorter:false}
 		}
 	});
 
@@ -66,12 +65,11 @@ function editPostSelect(uri, id, column_name){
 }
 
 function editPostSlider(uri, id, column_name, val){
-	$('#importance_num'+id).html(val);
+	$('#'+column_name+'_num'+id).html(val);
 	$('#list th').unbind();
 	$("#list").tablesorter({
-		sortList: [[0,1]],
 		headers: {
-			4: {sorter:false}
+			5: {sorter:false}
 		}
 	});
 	$.post(
@@ -86,7 +84,7 @@ function getData(data, status){
 		$("#list").tablesorter({
 			sortList: [[0,1]],
 			headers: {
-				4: {sorter:false}
+				5: {sorter:false}
 			}
 		});
 	}else{
